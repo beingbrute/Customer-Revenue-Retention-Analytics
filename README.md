@@ -115,6 +115,16 @@ The category-performance mart also preserves a transparent `Unclassified` bucket
 
 Because the model runs locally, the workflow does not require a paid API and does not send transaction data to an external AI service.
 
+### GenAI Category Analysis
+
+#### Net Revenue by Product Category
+
+![GenAI Category Net Revenue](screenshots/genai_category_net_revenue.png)
+
+#### Product Share vs Revenue Share
+
+![GenAI Product vs Revenue Share](screenshots/genai_product_vs_revenue_share.png)
+
 ## Tableau Dashboards
 
 ### Revenue Overview
