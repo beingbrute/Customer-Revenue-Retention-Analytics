@@ -1,0 +1,11 @@
+customer_segment,customer_count,average_recency_days,average_frequency,net_monetary_value,customer_share_pct,net_revenue_share_pct,business_objective,recommended_action,primary_kpi
+Champions,1448,26.049033149171272,16.28867403314917,12084864.697,24.743677375256322,74.04474814481942,Retain and reward,"Provide VIP benefits, early product access, and personalized cross-sell offers",Repeat purchase rate
+At Risk,803,359.1407222914072,5.165628891656289,1566824.843,13.721804511278195,9.600037219761454,Reactivate valuable customers,Prioritize high-value customers for personalized win-back and service recovery,Reactivation rate
+Potential Loyalists,907,35.03528114663727,2.891951488423374,886038.802,15.498974709501026,5.42881708530125,Develop repeat behavior,Use personalized recommendations and repeat-purchase incentives,Repeat purchase rate
+Loyal Customers,391,86.47570332480818,7.675191815856778,855276.042,6.681476418318523,5.2403316637801485,Increase customer value,"Use loyalty rewards, product bundles, and relevant recommendations",Purchase frequency
+Hibernating,1575,452.1009523809524,1.2895238095238095,511846.11100000003,26.913875598086122,3.136114249364217,Test low-cost reactivation,Use automated reactivation campaigns with controlled promotional costs,Cost per reactivated customer
+Need Attention,253,136.1304347826087,2.7786561264822134,211617.851,4.323308270676692,1.2965962692269704,Prevent customer lapse,Send targeted re-engagement offers based on previous purchasing behavior,Re-engagement rate
+Promising Customers,235,59.52340425531915,1.0,94525.91,4.015721120984279,0.5791663683952842,Build engagement,"Use product reminders, social proof, and category-based recommendations",90-day repeat rate
+High-Value Active,12,133.75,3.1666666666666665,46824.531,0.2050580997949419,0.28689693197433813,Protect high-value relationships,Provide priority service and personalized account-level communication,Customer retention rate
+New Customers,132,17.03787878787879,1.0,40839.340000000004,2.2556390977443606,0.25022527934891364,Drive a second purchase,Provide onboarding communication and a time-limited next-order incentive,Second-purchase rate
+Regular Customers,96,133.27083333333334,1.0,22370.71,1.6404647983595353,0.1370667880280028,Increase engagement,Use relevant product recommendations and purchase-frequency incentives,Purchase frequency

@@ -1,0 +1,67 @@
+# =========================================================
+# Large source and intermediate datasets
+# =========================================================
+
+data/raw/*
+!data/raw/.gitkeep
+
+data/processed/retail_transactions_clean.csv.gz
+data/processed/analytics/*checkpoint*.csv
+data/processed/analytics/*recovery*.csv
+
+
+# =========================================================
+# Environment variables and credentials
+# =========================================================
+
+.env
+.env.*
+!.env.example
+
+.venv/
+venv/
+env/
+
+
+# =========================================================
+# Python-generated files
+# =========================================================
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.log
+
+
+# =========================================================
+# Tableau temporary and extract files
+# =========================================================
+
+*.twb~
+*.hyper
+~$*.twb
+~$*.twbx
+*.twbr
+
+
+# =========================================================
+# Development tools
+# =========================================================
+
+.vscode/
+.idea/
+
+
+# =========================================================
+# Operating-system files
+# =========================================================
+
+.DS_Store
+Thumbs.db
+desktop.ini

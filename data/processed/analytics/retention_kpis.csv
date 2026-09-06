@@ -1,0 +1,5 @@
+retention_period,eligible_cohorts,eligible_customers,retained_customers,weighted_retention_pct
+Month 2,24,5824,1342,23.042582417582416
+Month 3,23,5633,1312,23.291319012959345
+Month 6,20,5117,1113,21.751025991792066
+Month 12,14,4387,950,21.65488944609072

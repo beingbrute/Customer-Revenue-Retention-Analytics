@@ -1,0 +1,3 @@
+customer_status,customer_count,sales_invoices,gross_sales,units_purchased,average_customer_sales,average_sales_invoices,customer_share_pct,gross_sales_share_pct
+Repeat Customer,4234,34975,16473612.765,10070772,3890.7918670288145,8.260510155880963,72.35133287764867,96.73509914413975
+One-Time Customer,1618,1618,555999.972,427923,343.6340988875154,1.0,27.648667122351334,3.2649008558602546

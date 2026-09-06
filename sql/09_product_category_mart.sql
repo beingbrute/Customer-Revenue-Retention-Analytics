@@ -1,0 +1,186 @@
+-- =========================================================
+-- GenAI product-category analytics
+-- =========================================================
+
+USE ROLE SYSADMIN;
+USE WAREHOUSE RETAIL_ANALYTICS_WH;
+USE DATABASE CUSTOMER_REVENUE_RETENTION_DB;
+USE SCHEMA ANALYTICS;
+
+
+-- =========================================================
+-- 1. Enrich merchandise transactions with GenAI categories
+-- =========================================================
+
+CREATE OR REPLACE VIEW VW_ENRICHED_MERCHANDISE_TRANSACTIONS AS
+SELECT
+    T.*,
+    P.PRODUCT_CATEGORY,
+    P.CONFIDENCE AS CLASSIFICATION_CONFIDENCE,
+    P.CLASSIFICATION_METHOD,
+    P.ABC_CLASS
+
+FROM STAGING.VW_TRANSACTIONS_STANDARDIZED AS T
+
+LEFT JOIN GENAI_PRODUCT_CLASSIFICATIONS AS P
+    ON T.STOCK_CODE = P.STOCK_CODE
+
+WHERE T.IS_VALID_MERCHANDISE = TRUE;
+
+
+-- =========================================================
+-- 2. Category-performance view for Tableau
+-- =========================================================
+
+CREATE OR REPLACE VIEW MART_CATEGORY_PERFORMANCE AS
+
+WITH CATEGORY_BASE AS (
+    SELECT
+        COALESCE(PRODUCT_CATEGORY, 'Unclassified')
+            AS PRODUCT_CATEGORY,
+
+        COUNT(DISTINCT STOCK_CODE)
+            AS PRODUCT_COUNT,
+
+        ROUND(SUM(GROSS_SALES_VALUE), 2)
+            AS GROSS_SALES,
+
+        ROUND(SUM(CANCELLATION_VALUE), 2)
+            AS CANCELLATION_VALUE,
+
+        ROUND(SUM(NET_REVENUE_VALUE), 2)
+            AS ESTIMATED_NET_REVENUE,
+
+        SUM(IFF(
+            IS_MERCHANDISE_SALE,
+            QUANTITY,
+            0
+        )) AS UNITS_SOLD,
+
+        COUNT(DISTINCT IFF(
+            IS_MERCHANDISE_SALE,
+            INVOICE_NO,
+            NULL
+        )) AS SALES_INVOICES,
+
+        COUNT(DISTINCT IFF(
+            IS_MERCHANDISE_SALE
+            AND CUSTOMER_ID IS NOT NULL,
+            CUSTOMER_ID,
+            NULL
+        )) AS KNOWN_CUSTOMERS,
+
+        COUNT(DISTINCT IFF(
+            ABC_CLASS = 'A',
+            STOCK_CODE,
+            NULL
+        )) AS A_CLASS_PRODUCTS
+
+    FROM VW_ENRICHED_MERCHANDISE_TRANSACTIONS
+
+    GROUP BY
+        COALESCE(PRODUCT_CATEGORY, 'Unclassified')
+)
+
+SELECT
+    PRODUCT_CATEGORY,
+    PRODUCT_COUNT,
+    GROSS_SALES,
+    CANCELLATION_VALUE,
+    ESTIMATED_NET_REVENUE,
+    UNITS_SOLD,
+    SALES_INVOICES,
+    KNOWN_CUSTOMERS,
+    A_CLASS_PRODUCTS,
+
+    ROUND(
+        PRODUCT_COUNT * 100.0 /
+        NULLIF(SUM(PRODUCT_COUNT) OVER (), 0),
+        4
+    ) AS PRODUCT_SHARE_PCT,
+
+    ROUND(
+        ESTIMATED_NET_REVENUE * 100.0 /
+        NULLIF(
+            SUM(ESTIMATED_NET_REVENUE) OVER (),
+            0
+        ),
+        4
+    ) AS NET_REVENUE_SHARE_PCT,
+
+    ROUND(
+        CANCELLATION_VALUE * 100.0 /
+        NULLIF(GROSS_SALES, 0),
+        2
+    ) AS CANCELLATION_RATE_PCT,
+
+    ROUND(
+        ESTIMATED_NET_REVENUE /
+        NULLIF(PRODUCT_COUNT, 0),
+        2
+    ) AS AVERAGE_NET_REVENUE_PER_PRODUCT
+
+FROM CATEGORY_BASE;
+
+
+-- =========================================================
+-- 3. Validate classifications and category totals
+-- =========================================================
+
+SELECT
+    (SELECT COUNT(*)
+     FROM GENAI_PRODUCT_CLASSIFICATIONS)
+        AS PRODUCT_CLASSIFICATION_ROWS,
+
+    (SELECT COUNT(DISTINCT STOCK_CODE)
+     FROM GENAI_PRODUCT_CLASSIFICATIONS)
+        AS UNIQUE_STOCK_CODES,
+
+    (SELECT COUNT(*)
+     FROM (
+         SELECT STOCK_CODE
+         FROM GENAI_PRODUCT_CLASSIFICATIONS
+         GROUP BY STOCK_CODE
+         HAVING COUNT(*) > 1
+     ))
+        AS DUPLICATE_STOCK_CODES,
+
+    (SELECT COUNT(DISTINCT PRODUCT_CATEGORY)
+     FROM GENAI_PRODUCT_CLASSIFICATIONS)
+        AS PRODUCT_CATEGORIES,
+
+    (SELECT COUNT_IF(
+         PRODUCT_CATEGORY IS NULL
+         OR TRIM(PRODUCT_CATEGORY) = ''
+     )
+     FROM GENAI_PRODUCT_CLASSIFICATIONS)
+        AS MISSING_PRODUCT_CATEGORIES,
+
+    (SELECT COUNT(*)
+     FROM STAGING.VW_TRANSACTIONS_STANDARDIZED
+     WHERE IS_VALID_MERCHANDISE = TRUE)
+        AS VALID_MERCHANDISE_ROWS,
+
+    (SELECT COUNT(*)
+     FROM VW_ENRICHED_MERCHANDISE_TRANSACTIONS)
+        AS ENRICHED_MERCHANDISE_ROWS,
+
+    COUNT_IF(PRODUCT_CATEGORY = 'Unclassified')
+        AS UNCLASSIFIED_CATEGORY_BUCKETS,
+
+    ROUND(SUM(GROSS_SALES), 2)
+        AS GROSS_MERCHANDISE_SALES,
+
+    ROUND(SUM(CANCELLATION_VALUE), 2)
+        AS CANCELLATION_VALUE,
+
+    ROUND(SUM(ESTIMATED_NET_REVENUE), 2)
+        AS NET_REVENUE,
+
+    ROUND(SUM(PRODUCT_SHARE_PCT), 2)
+        AS PRODUCT_SHARE_TOTAL_PCT,
+
+    ROUND(SUM(NET_REVENUE_SHARE_PCT), 2)
+        AS NET_REVENUE_SHARE_TOTAL_PCT
+
+FROM MART_CATEGORY_PERFORMANCE;

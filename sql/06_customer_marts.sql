@@ -1,0 +1,103 @@
+-- =========================================================
+-- Customer analytics marts
+-- =========================================================
+
+USE ROLE SYSADMIN;
+USE WAREHOUSE RETAIL_ANALYTICS_WH;
+USE DATABASE CUSTOMER_REVENUE_RETENTION_DB;
+USE SCHEMA ANALYTICS;
+
+
+-- Customer-level analytical view
+CREATE OR REPLACE VIEW DIM_CUSTOMER AS
+WITH CUSTOMER_ROLLUP AS (
+    SELECT
+        CUSTOMER_ID,
+
+        MIN(IFF(
+            IS_MERCHANDISE_SALE,
+            INVOICE_DATE,
+            NULL
+        )) AS FIRST_PURCHASE_DATE,
+
+        MAX(IFF(
+            IS_MERCHANDISE_SALE,
+            INVOICE_DATE,
+            NULL
+        )) AS LAST_PURCHASE_DATE,
+
+        COUNT(DISTINCT IFF(
+            IS_MERCHANDISE_SALE,
+            INVOICE_NO,
+            NULL
+        )) AS SALES_INVOICES,
+
+        SUM(IFF(
+            IS_MERCHANDISE_SALE,
+            QUANTITY,
+            0
+        )) AS UNITS_PURCHASED,
+
+        ROUND(SUM(GROSS_SALES_VALUE), 2)
+            AS GROSS_SALES,
+
+        ROUND(SUM(CANCELLATION_VALUE), 2)
+            AS CANCELLATION_VALUE,
+
+        ROUND(SUM(NET_REVENUE_VALUE), 2)
+            AS NET_REVENUE
+
+    FROM STAGING.VW_TRANSACTIONS_STANDARDIZED
+    WHERE CUSTOMER_ID IS NOT NULL
+      AND IS_VALID_MERCHANDISE = TRUE
+    GROUP BY CUSTOMER_ID
+)
+
+SELECT
+    CUSTOMER_ID,
+    FIRST_PURCHASE_DATE,
+    LAST_PURCHASE_DATE,
+    SALES_INVOICES,
+    UNITS_PURCHASED,
+    GROSS_SALES,
+    CANCELLATION_VALUE,
+    NET_REVENUE,
+
+    CASE
+        WHEN SALES_INVOICES > 1 THEN 'Repeat Customer'
+        ELSE 'One-Time Customer'
+    END AS CUSTOMER_TYPE
+
+FROM CUSTOMER_ROLLUP
+WHERE SALES_INVOICES > 0;
+
+
+-- Customer-type summary for Tableau
+CREATE OR REPLACE VIEW MART_CUSTOMER_TYPE_SUMMARY AS
+SELECT
+    CUSTOMER_TYPE,
+    COUNT(*) AS CUSTOMER_COUNT,
+
+    ROUND(
+    COUNT(*) * 100.0 /
+    NULLIF(SUM(COUNT(*)) OVER (), 0),
+    2
+) AS CUSTOMER_PERCENTAGE,
+
+    ROUND(SUM(GROSS_SALES), 2)
+        AS GROSS_SALES,
+
+    ROUND(SUM(NET_REVENUE), 2)
+        AS NET_REVENUE
+
+FROM DIM_CUSTOMER
+GROUP BY CUSTOMER_TYPE;
+
+
+-- Validate customer counts
+SELECT
+    CUSTOMER_TYPE,
+    CUSTOMER_COUNT,
+    CUSTOMER_PERCENTAGE
+FROM MART_CUSTOMER_TYPE_SUMMARY
+ORDER BY CUSTOMER_COUNT DESC;

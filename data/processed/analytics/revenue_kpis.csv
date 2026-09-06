@@ -1,0 +1,9 @@
+kpi,value,unit
+gross_merchandise_sales,19604891.637000002,GBP
+merchandise_cancellation_value,716462.5700000001,GBP
+estimated_net_merchandise_revenue,18888429.067,GBP
+sales_invoices,39515.0,Count
+units_sold,11188001.0,Count
+known_customers,5852.0,Count
+average_merchandise_order_value,496.13796373529044,GBP
+cancellation_rate_by_value,3.6545092075277354,Percentage

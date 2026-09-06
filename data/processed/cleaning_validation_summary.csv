@@ -1,0 +1,11 @@
+Check,Result
+Standardized rows,1033036
+Remaining business duplicates,0
+Missing invoice numbers,0
+Missing invoice dates,0
+Missing quantities,0
+Missing unit prices,0
+Eligible merchandise sales rows,1003356
+Identified-customer merchandise rows,776595
+Merchandise cancellation rows,17915
+Excluded suspected entry errors,1

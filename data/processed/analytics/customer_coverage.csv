@@ -1,0 +1,3 @@
+customer_status,row_count,sales_invoices,units_sold,gross_sales,known_customers,sales_row_share_pct,invoice_share_pct,gross_sales_share_pct
+Identified Customer,776595,36593,10498695,17029612.737,5852,77.39974645091074,92.60533974440087,86.86410030882438
+Anonymous Customer,226761,2922,689306,2575278.9,0,22.600253549089256,7.394660255599139,13.13589969117563

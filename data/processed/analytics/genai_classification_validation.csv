@@ -1,0 +1,13 @@
+metric,result
+Product classification rows,4725.0
+Unique stock codes,4725.0
+Description classification rows,4685.0
+Unique description IDs,4685.0
+Description category conflicts,0.0
+Missing product categories,0.0
+Invalid product categories,0.0
+Other / Unclear products,324.0
+Other / Unclear product share pct,6.86
+LLM-only products,3680.0
+Rule or QA-supported products,1045.0
+Category revenue share total pct,100.0

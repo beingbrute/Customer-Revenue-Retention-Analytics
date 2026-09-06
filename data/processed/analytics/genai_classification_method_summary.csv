@@ -1,0 +1,7 @@
+classification_method,product_count,product_share_pct
+LLM only,3680,77.88
+LLM + rule agreement,787,16.66
+QA keyword correction,107,2.26
+Keyword rule override,85,1.8
+QA rule agreement,33,0.7
+Manual QA correction,33,0.7
