@@ -251,11 +251,10 @@ data/raw/online_retail_II.xlsx
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/beingbrute/Customer-Revenue-Retention-Analytics.git
 cd Customer-Revenue-Retention-Analytics
 ```
 
-Replace `<repository-url>` with the final GitHub repository URL after publishing the project.
 
 ### 2. Install the Python packages
 
