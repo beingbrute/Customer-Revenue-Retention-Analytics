@@ -312,4 +312,6 @@ Additional documentation is available in:
 
 **Aditya Ranjan**
 
-Aspiring Data Analyst skilled in Python, SQL, Snowflake, Tableau, Power BI, Excel, data cleaning, ETL, and data visualization.
+Data Analyst | Python · SQL · Power BI · Tableau
+
+[LinkedIn](www.linkedin.com/in/aditya-ranjan-data) · [GitHub](https://github.com/beingbrute) · adityaranjan17302215@gmail.com
