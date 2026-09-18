@@ -27,6 +27,23 @@ The project addresses the following questions:
 * How did customer retention change after the first purchase?
 * Which product categories generated the most net revenue?
 
+
+
+## Business Impact
+
+The analysis converts transaction history into three concrete commercial decisions:
+
+**1. Concentrate retention spend on Champions.**
+1,448 Champions represent 24.74% of identified customers but generate 74.04% of net revenue. Retention budget, loyalty benefits and account outreach should be weighted toward this segment, because losing one Champion costs roughly nine times what losing an average customer does.
+
+**2. Treat the one-time buyer base as a second-purchase problem, not an acquisition problem.**
+27.65% of known customers never purchased again, and weighted retention drops to 23.04% by Month 2. The steepest loss happens immediately after the first order, so the highest-leverage intervention is a post-purchase sequence in the first 30 days rather than additional top-of-funnel spend.
+
+**3. Recover margin from cancellations.**
+£716,462.57 in cancellations represents a 3.65% cancellation rate against gross merchandise sales. Even a one-percentage-point reduction returns roughly £196K, making cancellation-driver analysis a measurable next step.
+
+**Recommended next steps:** build a second-purchase conversion campaign targeting Month 1 customers, instrument cancellation reason codes at the point of order, and review the 12 product categories against the ABC classification to identify range-rationalisation candidates.
+
 ## Project Architecture
 
 ```mermaid
