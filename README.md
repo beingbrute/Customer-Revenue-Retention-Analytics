@@ -34,7 +34,7 @@ The project addresses the following questions:
 The analysis converts transaction history into three concrete commercial decisions:
 
 **1. Concentrate retention spend on Champions.**
-1,448 Champions represent 24.74% of identified customers but generate 74.04% of net revenue. Retention budget, loyalty benefits and account outreach should be weighted toward this segment, because losing one Champion costs roughly nine times what losing an average customer does.
+1,448 Champions represent 24.74% of identified customers but generate 74.04% of identified-customer net revenue. Retention budget, loyalty benefits and account outreach should be weighted toward this segment, because an average Champion is worth about three times an average identified customer (£8,346 vs £2,789 in net revenue).
 
 **2. Treat the one-time buyer base as a second-purchase problem, not an acquisition problem.**
 27.65% of known customers never purchased again, and weighted retention drops to 23.04% by Month 2. The steepest loss happens immediately after the first order, so the highest-leverage intervention is a post-purchase sequence in the first 30 days rather than additional top-of-funnel spend.
