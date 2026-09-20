@@ -29,20 +29,20 @@ The project addresses the following questions:
 
 
 
-## Business Impact
+## Recommendations (from this dataset)
 
-The analysis converts transaction history into three concrete commercial decisions:
+The findings below are associations observed in this dataset, not proof of cause and effect. This is a portfolio analysis of a public dataset, so no business acted on these results.
 
-**1. Concentrate retention spend on Champions.**
-1,448 Champions represent 24.74% of identified customers but generate 74.04% of identified-customer net revenue. Retention budget, loyalty benefits and account outreach should be weighted toward this segment, because an average Champion is worth about three times an average identified customer (£8,346 vs £2,789 in net revenue).
+**1. Weight retention effort toward the Champions segment.**
+1,448 Champions are 24.74% of identified customers and account for 74.04% of identified-customer net revenue, so an average Champion is worth about three times an average identified customer (£8,346 vs £2,789 in net revenue). A retailer could test whether loyalty benefits and account outreach aimed at this segment hold more revenue than broad campaigns.
 
-**2. Treat the one-time buyer base as a second-purchase problem, not an acquisition problem.**
-27.65% of known customers never purchased again, and weighted retention drops to 23.04% by Month 2. The steepest loss happens immediately after the first order, so the highest-leverage intervention is a post-purchase sequence in the first 30 days rather than additional top-of-funnel spend.
+**2. Look at the second purchase, not only at acquisition.**
+27.65% of identified customers never purchased again, and weighted retention falls to 23.04% by Month 2. Most of the drop happens immediately after the first order, so a follow-up in the first 30 days is worth testing against further top-of-funnel spend.
 
-**3. Recover margin from cancellations.**
-£716,462.57 in cancellations represents a 3.65% cancellation rate against gross merchandise sales. Even a one-percentage-point reduction returns roughly £196K, making cancellation-driver analysis a measurable next step.
+**3. Size the cancellations before trying to reduce them.**
+£716,462.57 of cancellations is a 3.65% cancellation rate against gross merchandise sales, so one percentage point is roughly £196K of gross sales. The dataset carries no cancellation reason codes, so the causes cannot be identified from this data alone.
 
-**Recommended next steps:** build a second-purchase conversion campaign targeting Month 1 customers, instrument cancellation reason codes at the point of order, and review the 12 product categories against the ABC classification to identify range-rationalisation candidates.
+**Next steps this data supports:** capture cancellation reason codes at the point of order, and review the 12 product categories against an ABC classification to identify range-rationalisation candidates.
 
 ## Project Architecture
 
