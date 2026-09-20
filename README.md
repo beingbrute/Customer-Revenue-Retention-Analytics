@@ -331,4 +331,4 @@ Additional documentation is available in:
 
 Data Analyst | Python · SQL · Power BI · Tableau
 
-[LinkedIn](www.linkedin.com/in/aditya-ranjan-data) · [GitHub](https://github.com/beingbrute) · adityaranjan17302215@gmail.com
+[LinkedIn](https://www.linkedin.com/in/aditya-ranjan-data) · [GitHub](https://github.com/beingbrute) · adityaranjan17302215@gmail.com
