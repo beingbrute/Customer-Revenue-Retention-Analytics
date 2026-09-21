@@ -317,7 +317,7 @@ Open:
 tableau/Customer_Revenue_Retention_Analytics_Snowflake.twbx
 ```
 
-Sign in to Snowflake if Tableau requests a connection.
+No sign-in is needed: the workbook packages CSV extracts of the Snowflake presentation views. The same dashboards are on Tableau Public (see [Tableau Dashboards](#tableau-dashboards)).
 
 ## Documentation
 
