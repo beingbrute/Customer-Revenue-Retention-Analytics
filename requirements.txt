@@ -1,8 +1,9 @@
-pandas
-numpy
-matplotlib
-seaborn
-openpyxl
-ollama
-jupyter
-ipykernel
+# Versions used to run the notebooks (Python 3.11.16)
+pandas==3.0.5
+numpy==2.4.6
+matplotlib==3.11.1
+seaborn==0.13.2
+openpyxl==3.1.5
+ollama==0.6.2
+jupyter==1.1.1
+ipykernel==7.3.0
