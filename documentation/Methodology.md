@@ -311,7 +311,7 @@ The Python-generated customer-segment and product-classification outputs were lo
 
 ## 9. Tableau Implementation
 
-Tableau was connected directly to the finalized Snowflake analytical views.
+The dashboards were built with Tableau connected directly to the finalized Snowflake analytical views.
 
 Six Snowflake data sources were used:
 
@@ -322,7 +322,7 @@ Six Snowflake data sources were used:
 * `SF_Retention_KPI_Cards`
 * `SF_Revenue_KPI_Cards`
 
-The previous CSV-based Tableau sources were removed after the Snowflake migration was validated.
+For publishing, each view was exported to CSV and packaged into the workbook as an extract, because Tableau Public does not accept Snowflake connections. The workbook in this repository is that packaged version, so it opens without a Snowflake account. The [Tableau documentation](../tableau/README.md) maps each packaged source to its Snowflake view.
 
 Two final dashboards were created:
 
@@ -396,4 +396,4 @@ Run the SQL files in numerical order:
 
 The cleaned transaction data and Python-generated analytical outputs must be loaded into their corresponding Snowflake tables before running SQL views that depend on them.
 
-After the Snowflake validation is complete, open the Tableau workbook and authenticate the Snowflake connection if prompted.
+The Tableau workbook does not depend on these steps: it packages CSV extracts of the presentation views, so it opens without a Snowflake sign-in. The same dashboards are published on [Tableau Public](../README.md#tableau-dashboards).
