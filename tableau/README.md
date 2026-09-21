@@ -1,8 +1,8 @@
 # Tableau Dashboards
 
-This folder contains the final packaged Tableau workbook for the Customer Revenue & Retention Analytics project.
+This folder contains the packaged Tableau workbook for the Customer Revenue & Retention Analytics project.
 
-The workbook uses analytical views created in Snowflake. The original CSV data sources were removed after the Snowflake migration and dashboard results were validated.
+The dashboards are also published on Tableau Public: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview).
 
 ## Workbook
 
@@ -12,33 +12,28 @@ The workbook uses analytical views created in Snowflake. The original CSV data s
 Customer_Revenue_Retention_Analytics_Snowflake.twbx
 ```
 
-## Snowflake Connection
+## How the Data Reaches Tableau
 
-The Tableau workbook connects to:
+The dashboards were built against analytical views in the Snowflake `ANALYTICS` layer:
 
-| Setting         | Value                           |
-| --------------- | ------------------------------- |
-| Warehouse       | `RETAIL_ANALYTICS_WH`           |
-| Database        | `CUSTOMER_REVENUE_RETENTION_DB` |
-| Schema          | `ANALYTICS`                     |
-| Connection mode | Extract                         |
+| Setting   | Value                           |
+| --------- | ------------------------------- |
+| Warehouse | `RETAIL_ANALYTICS_WH`           |
+| Database  | `CUSTOMER_REVENUE_RETENTION_DB` |
+| Schema    | `ANALYTICS`                     |
 
-Snowflake login credentials are not stored in the repository.
+Tableau Public does not accept Snowflake connections, so each view was exported to CSV and packaged into the workbook as an extract. The workbook therefore opens without a Snowflake account, and its dashboard figures match the validated Snowflake results below. Percentages in the exported files are rounded to the precision the dashboards display.
 
 ## Tableau Data Sources
 
-The workbook uses six Snowflake data sources:
-
-| Tableau data source       | Snowflake analytical view   |
-| ------------------------- | --------------------------- |
-| `SF_Monthly_Revenue`      | `MART_MONTHLY_REVENUE`      |
-| `SF_Category_Performance` | `MART_CATEGORY_PERFORMANCE` |
-| `SF_Customer_Segments`    | `MART_CUSTOMER_SEGMENTS`    |
-| `SF_Cohort_Retention`     | `MART_COHORT_RETENTION`     |
-| `SF_Revenue_KPI_Cards`    | `MART_REVENUE_KPI_CARDS`    |
-| `SF_Retention_KPI_Cards`  | `MART_RETENTION_KPI_CARDS`  |
-
-The six previous CSV-based data sources were closed after the Snowflake replacements were validated.
+| Tableau data source    | Exported from Snowflake view |
+| ---------------------- | ---------------------------- |
+| `monthly_revenue`      | `MART_MONTHLY_REVENUE`       |
+| `category_performance` | `MART_CATEGORY_PERFORMANCE`  |
+| `customer_segments`    | `MART_CUSTOMER_SEGMENTS`     |
+| `cohort_retention`     | `MART_COHORT_RETENTION`      |
+| `revenue_kpi_cards`    | `MART_REVENUE_KPI_CARDS`     |
+| `retention_kpi_cards`  | `MART_RETENTION_KPI_CARDS`   |
 
 ## Dashboards
 
@@ -103,12 +98,7 @@ The cohort heatmap includes only periods each cohort was old enough to reach.
 
 1. Install Tableau Desktop or Tableau Public.
 2. Download the packaged workbook from this folder.
-3. Open `Customer_Revenue_Retention_Analytics_Snowflake.twbx`.
-4. Sign in to Snowflake if Tableau requests authentication.
-5. Select `RETAIL_ANALYTICS_WH` if a warehouse selection is required.
-6. Refresh the extracts if access to the Snowflake database is available.
-
-The packaged extracts allow the dashboard results to remain visible even when the viewer does not have access to the original Snowflake account.
+3. Open `Customer_Revenue_Retention_Analytics_Snowflake.twbx`. No sign-in is needed, because the data is packaged inside the workbook.
 
 ## Tools
 
