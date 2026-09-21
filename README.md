@@ -144,6 +144,8 @@ Because the model runs locally, the workflow does not require a paid API and doe
 
 ## Tableau Dashboards
 
+Both dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview).
+
 ### Revenue Overview
 
 The Revenue Overview dashboard presents:
