@@ -144,7 +144,7 @@ Because the model runs locally, the workflow does not require a paid API and doe
 
 ## Tableau Dashboards
 
-The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment Revenue Share & Reconciliation (FIXED LOD + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
+The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment LOD Analysis & Reconciliation (FIXED, INCLUDE, EXCLUDE + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
 ### Revenue Overview
 
@@ -171,11 +171,11 @@ The Retention Overview dashboard presents:
 
 ![Retention Overview](screenshots/tableau_retention_overview.png)
 
-### Segment Revenue Share, Country Benchmark & Reconciliation (FIXED LOD + Blend)
+### Customer Segments: FIXED, INCLUDE & EXCLUDE LOD + Data Blend
 
 This dashboard was added after the first two and is published as a separate view: [Customer Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
-It uses FIXED level-of-detail expressions on the RFM customer table (5,852 customers):
+It uses all three types of level-of-detail expression on the RFM customer table (5,852 customers), plus a data blend:
 
 | Calculation | Formula |
 | --- | --- |
@@ -183,9 +183,14 @@ It uses FIXED level-of-detail expressions on the RFM customer table (5,852 custo
 | Segment Revenue Share (LOD) | `[Segment Revenue (LOD)] / { FIXED : SUM([net_monetary_value]) }` |
 | Country Avg Revenue (LOD) | `{ FIXED [primary_country] : AVG([net_monetary_value]) }` |
 | Vs Country Average | `IF [net_monetary_value] > [Country Avg Revenue (LOD)] THEN "Above country average" ELSE "At or below country average" END` |
+| Country Revenue (INCLUDE) | `{ INCLUDE [primary_country] : SUM([net_monetary_value]) }`, shown as AVG at segment level |
+| Country Group | `IF [primary_country] = "United Kingdom" THEN "UK" ELSE "Outside UK" END` |
+| Share of Segment Revenue (EXCLUDE) | `SUM([net_monetary_value]) / MIN({ EXCLUDE [Country Group] : SUM([net_monetary_value]) })` |
 
 * **Segment share:** because the numerator and denominator are fixed, each segment's share of net revenue stays correct whatever else is on the view. Champions account for 74.04% of net revenue, matching the RFM analysis in notebook 04.
 * **Country benchmark:** each customer is compared with the average for their own primary country rather than the global average. 994 of the 1,448 Champions are above their country's average and 454 are at or below it.
+* **Average revenue per country (INCLUDE):** the view is at segment level and INCLUDE adds country underneath, so each segment shows its average net revenue per country it sells in. Champions sell in 22 countries at £549,312 per country on average, a figure pulled up by the UK.
+* **UK share of segment revenue (EXCLUDE):** the view is segment × Country Group (UK / Outside UK) and EXCLUDE removes Country Group to get each segment's total. Nine segments take 79–93% of their revenue from the UK; High-Value Active takes only 45.70%, so most of that segment's revenue comes from outside the UK. Countries are grouped rather than filtered because EXCLUDE respects dimension filters: a UK-only filter would make every share 100%.
 * **Reconciliation (data blend):** the RFM customer table (primary source) is blended with the Snowflake `MART_CUSTOMER_SEGMENTS` export (secondary source) on Customer Segment, and `Difference (LOD vs Snowflake)` = `SUM([Segment Revenue Share (LOD)]) - SUM([customer_segments].[Net Revenue Share Pct])`. Every segment differs by 0.05 percentage points or less, which is the rounding in the Snowflake export (3 decimals), so the Tableau and Snowflake segment shares agree.
 
 | Segment | LOD share (Python RFM table) | Snowflake mart share | Difference |
