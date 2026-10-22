@@ -203,6 +203,8 @@ It uses FIXED level-of-detail expressions on the RFM customer table (5,852 custo
 
 ![Segment Revenue Share and Country Benchmark](screenshots/tableau_lod_analysis.png)
 
+**Tableau Cloud deployment (practice):** the same workbook was also published to a personal Tableau Cloud developer site, into a project with an Analysts group (publish) and a Viewers group (view only). Project permissions are locked, viewers are denied summary-data downloads (their Viewer site role already blocks full data and workbook downloads), and the restrictions were checked by signing in as the viewer: only image, PDF and PowerPoint downloads were offered and there was no Edit option. The developer site is a private sandbox, so there is no public link.
+
 The Tableau workbook is available here:
 
 [Download the Tableau workbook](tableau/Customer_Revenue_Retention_Analytics_Snowflake.twbx)
