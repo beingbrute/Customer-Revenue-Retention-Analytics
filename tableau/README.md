@@ -2,7 +2,7 @@
 
 This folder contains the packaged Tableau workbook for the Customer Revenue & Retention Analytics project.
 
-The dashboards are also published on Tableau Public: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview).
+The dashboards are also published on Tableau Public: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
 ## Workbook
 
@@ -34,6 +34,9 @@ Tableau Public does not accept Snowflake connections, so each view was exported 
 | `cohort_retention`     | `MART_COHORT_RETENTION`      |
 | `revenue_kpi_cards`    | `MART_REVENUE_KPI_CARDS`     |
 | `retention_kpi_cards`  | `MART_RETENTION_KPI_CARDS`   |
+| `customer_rfm_segments` | `CUSTOMER_RFM_SEGMENTS`     |
+
+`customer_rfm_segments` is the RFM output of `notebooks/04_customer_segmentation.ipynb` (`data/processed/analytics/customer_rfm_segments.csv`, 5,852 customers), the same table loaded into Snowflake as `ANALYTICS.CUSTOMER_RFM_SEGMENTS`. It feeds only the LOD dashboard.
 
 ## Dashboards
 
@@ -72,6 +75,26 @@ It includes:
 The cohort heatmap includes only periods each cohort was old enough to reach.
 
 ![Retention Overview](../screenshots/tableau_retention_overview.png)
+
+### Segment Revenue Share & Country Benchmark (FIXED LOD)
+
+Added after the first two dashboards and published as a separate view: [Customer Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
+
+It contains two sheets built on `customer_rfm_segments`:
+
+* **Segment Share (LOD):** each customer segment's share of total net revenue.
+* **Vs Country Average (LOD):** the number of customers in each segment whose net revenue is above or at/below the average for their own primary country.
+
+| Calculation | Formula |
+| --- | --- |
+| Segment Revenue (LOD) | `{ FIXED [customer_segment] : SUM([net_monetary_value]) }` |
+| Segment Revenue Share (LOD) | `[Segment Revenue (LOD)] / { FIXED : SUM([net_monetary_value]) }` |
+| Country Avg Revenue (LOD) | `{ FIXED [primary_country] : AVG([net_monetary_value]) }` |
+| Vs Country Average | `IF [net_monetary_value] > [Country Avg Revenue (LOD)] THEN "Above country average" ELSE "At or below country average" END` |
+
+Results: Champions hold 74.04% of net revenue (matching the RFM analysis in notebook 04), and 994 of the 1,448 Champions are above their country's average.
+
+![Segment Revenue Share and Country Benchmark](../screenshots/tableau_lod_analysis.png)
 
 ## Validated Dashboard KPIs
 
