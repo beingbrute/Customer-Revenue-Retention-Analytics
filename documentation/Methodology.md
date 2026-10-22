@@ -342,14 +342,14 @@ The Retention Overview dashboard contains:
 * Net-revenue share by customer segment
 * Customer cohort-retention heatmap
 
-### Segment Revenue Share & Country Benchmark (FIXED LOD)
+### Segment Revenue Share, Country Benchmark & Reconciliation (FIXED LOD + Blend)
 
 A third dashboard was added later and published as a separate view. It uses the RFM customer table (`customer_rfm_segments`, the notebook 04 output loaded into Snowflake as `ANALYTICS.CUSTOMER_RFM_SEGMENTS`) and FIXED level-of-detail expressions to show:
 
 * Each customer segment's share of total net revenue, fixed at segment level so the share does not change with the fields on the view
 * How many customers in each segment have net revenue above the average for their own primary country
 
-The segment shares reproduce the Python RFM results, including the 74.04% net-revenue share for Champions. The formulas are listed in the [Tableau documentation](../tableau/README.md).
+The segment shares reproduce the Python RFM results, including the 74.04% net-revenue share for Champions. A third sheet blends the RFM customer table (primary) with the `customer_segments` export of `MART_CUSTOMER_SEGMENTS` (secondary) on Customer Segment and shows the difference between the two shares for each segment. All differences are within ±0.05 percentage points, the rounding in the Snowflake export. The formulas are listed in the [Tableau documentation](../tableau/README.md).
 
 ## 10. Quality Assurance
 
