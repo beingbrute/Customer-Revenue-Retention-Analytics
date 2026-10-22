@@ -123,6 +123,19 @@ Every difference is within ±0.05 percentage points. The Snowflake export stores
 
 ![Segment Revenue Share and Country Benchmark](../screenshots/tableau_lod_analysis.png)
 
+## Tableau Cloud Deployment (Practice)
+
+The workbook was also published to a personal Tableau Cloud developer site to practise deployment and permissions. The site is a private sandbox, so there is no public link.
+
+| Setting | Value |
+| --- | --- |
+| Project | Retail Analytics |
+| Groups | Analysts (Site Administrator Creator, Publish template) and Viewers (Viewer site role, View template) |
+| Workbook rule for Viewers | View template with Download Summary Data set to Denied |
+| Asset permissions | Locked to the project, including nested projects |
+
+Effective permissions for the viewer: view, filter, comment and download image/PDF; no summary or full data download, no underlying data, no web edit and no workbook download. This was checked by signing in as the viewer: the Download menu offered only Image, Vector Image, PDF and PowerPoint, and the toolbar had no Edit option.
+
 ## Validated Dashboard KPIs
 
 ### Revenue KPIs
