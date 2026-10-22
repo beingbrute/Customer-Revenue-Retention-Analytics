@@ -144,7 +144,7 @@ Because the model runs locally, the workflow does not require a paid API and doe
 
 ## Tableau Dashboards
 
-Both dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview).
+The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
 ### Revenue Overview
 
@@ -170,6 +170,24 @@ The Retention Overview dashboard presents:
 * Retention percentage colour scale
 
 ![Retention Overview](screenshots/tableau_retention_overview.png)
+
+### Segment Revenue Share & Country Benchmark (FIXED LOD)
+
+This dashboard was added after the first two and is published as a separate view: [Customer Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
+
+It uses FIXED level-of-detail expressions on the RFM customer table (5,852 customers):
+
+| Calculation | Formula |
+| --- | --- |
+| Segment Revenue (LOD) | `{ FIXED [customer_segment] : SUM([net_monetary_value]) }` |
+| Segment Revenue Share (LOD) | `[Segment Revenue (LOD)] / { FIXED : SUM([net_monetary_value]) }` |
+| Country Avg Revenue (LOD) | `{ FIXED [primary_country] : AVG([net_monetary_value]) }` |
+| Vs Country Average | `IF [net_monetary_value] > [Country Avg Revenue (LOD)] THEN "Above country average" ELSE "At or below country average" END` |
+
+* **Segment share:** because the numerator and denominator are fixed, each segment's share of net revenue stays correct whatever else is on the view. Champions account for 74.04% of net revenue, matching the RFM analysis in notebook 04.
+* **Country benchmark:** each customer is compared with the average for their own primary country rather than the global average. 994 of the 1,448 Champions are above their country's average and 454 are at or below it.
+
+![Segment Revenue Share and Country Benchmark](screenshots/tableau_lod_analysis.png)
 
 The Tableau workbook is available here:
 
@@ -217,6 +235,7 @@ Customer-Revenue-Retention-Analytics/
 ├── screenshots/
 │   ├── tableau_revenue_overview.png
 │   ├── tableau_retention_overview.png
+│   ├── tableau_lod_analysis.png
 │   ├── genai_category_net_revenue.png
 │   └── genai_product_vs_revenue_share.png
 │
@@ -317,7 +336,7 @@ Open:
 tableau/Customer_Revenue_Retention_Analytics_Snowflake.twbx
 ```
 
-No sign-in is needed: the workbook packages CSV extracts of the Snowflake presentation views. The same dashboards are on Tableau Public (see [Tableau Dashboards](#tableau-dashboards)).
+No sign-in is needed: the workbook packages CSV extracts of the Snowflake presentation views and of the RFM customer table used by the LOD dashboard. The same dashboards are on Tableau Public (see [Tableau Dashboards](#tableau-dashboards)).
 
 ## Documentation
 
