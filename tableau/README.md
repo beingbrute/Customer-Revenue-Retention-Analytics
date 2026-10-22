@@ -2,7 +2,7 @@
 
 This folder contains the packaged Tableau workbook for the Customer Revenue & Retention Analytics project.
 
-The dashboards are also published on Tableau Public: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment Revenue Share & Reconciliation (FIXED LOD + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
+The dashboards are also published on Tableau Public: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment LOD Analysis & Reconciliation (FIXED, INCLUDE, EXCLUDE + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
 ## Workbook
 
@@ -76,15 +76,17 @@ The cohort heatmap includes only periods each cohort was old enough to reach.
 
 ![Retention Overview](../screenshots/tableau_retention_overview.png)
 
-### Segment Revenue Share, Country Benchmark & Reconciliation (FIXED LOD + Blend)
+### Customer Segments: FIXED, INCLUDE & EXCLUDE LOD + Data Blend
 
 Added after the first two dashboards and published as a separate view: [Customer Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
-It contains three sheets:
+It contains five sheets:
 
 * **Segment Share (LOD):** each customer segment's share of total net revenue.
 * **Vs Country Average (LOD):** the number of customers in each segment whose net revenue is above or at/below the average for their own primary country.
 * **Segment Reconciliation (Blend):** the LOD segment share next to the share from the Snowflake segment mart, with the difference between them.
+* **Avg Revenue per Country (INCLUDE):** each segment's average net revenue per country it sells in.
+* **UK Share of Segment Revenue (EXCLUDE):** each segment's revenue split between the UK and outside the UK.
 
 | Calculation | Formula |
 | --- | --- |
@@ -92,9 +94,31 @@ It contains three sheets:
 | Segment Revenue Share (LOD) | `[Segment Revenue (LOD)] / { FIXED : SUM([net_monetary_value]) }` |
 | Country Avg Revenue (LOD) | `{ FIXED [primary_country] : AVG([net_monetary_value]) }` |
 | Vs Country Average | `IF [net_monetary_value] > [Country Avg Revenue (LOD)] THEN "Above country average" ELSE "At or below country average" END` |
+| Country Revenue (INCLUDE) | `{ INCLUDE [primary_country] : SUM([net_monetary_value]) }`, shown as AVG at segment level |
+| Country Group | `IF [primary_country] = "United Kingdom" THEN "UK" ELSE "Outside UK" END` |
+| Share of Segment Revenue (EXCLUDE) | `SUM([net_monetary_value]) / MIN({ EXCLUDE [Country Group] : SUM([net_monetary_value]) })` |
 | Difference (LOD vs Snowflake) | `SUM([Segment Revenue Share (LOD)]) - SUM([customer_segments].[Net Revenue Share Pct])` |
 
 Results: Champions hold 74.04% of net revenue (matching the RFM analysis in notebook 04), and 994 of the 1,448 Champions are above their country's average.
+
+#### INCLUDE and EXCLUDE
+
+The INCLUDE view is at segment level; INCLUDE adds country underneath, and the sheet averages those country totals back to segment. The EXCLUDE view is segment × Country Group; EXCLUDE removes Country Group to give each segment's total, read with MIN because the value repeats on every row. Countries are grouped into UK and Outside UK instead of filtered, because INCLUDE and EXCLUDE respect dimension filters (FIXED does not): a UK-only filter would make every share 100%.
+
+| Segment | Country values | Avg net revenue per country (INCLUDE) | UK share of segment revenue (EXCLUDE) |
+| --- | ---: | ---: | ---: |
+| Champions | 22 | £549,312 | 82.23% |
+| Loyal Customers | 11 | £77,752 | 92.68% |
+| At Risk | 25 | £62,673 | 87.97% |
+| Potential Loyalists | 21 | £42,192 | 81.95% |
+| Hibernating | 29 | £17,650 | 89.84% |
+| Need Attention | 15 | £14,108 | 84.28% |
+| High-Value Active | 6 | £7,804 | 45.70% |
+| Promising Customers | 14 | £6,752 | 79.38% |
+| New Customers | 11 | £3,713 | 86.23% |
+| Regular Customers | 8 | £2,796 | 86.44% |
+
+"Country values" counts the distinct `primary_country` values in each segment; a few segments include the dataset's `Unspecified` or `European Community` labels, which INCLUDE treats like any other value. Both results were checked against the same aggregation in Python on `customer_rfm_segments.csv`, and every value matched. High-Value Active is the only segment with most of its revenue (54.30%) outside the UK.
 
 #### Data blend
 
