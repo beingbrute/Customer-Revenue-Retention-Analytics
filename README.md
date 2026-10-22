@@ -144,7 +144,7 @@ Because the model runs locally, the workflow does not require a paid API and doe
 
 ## Tableau Dashboards
 
-The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
+The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment Revenue Share & Reconciliation (FIXED LOD + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
 ### Revenue Overview
 
@@ -171,7 +171,7 @@ The Retention Overview dashboard presents:
 
 ![Retention Overview](screenshots/tableau_retention_overview.png)
 
-### Segment Revenue Share & Country Benchmark (FIXED LOD)
+### Segment Revenue Share, Country Benchmark & Reconciliation (FIXED LOD + Blend)
 
 This dashboard was added after the first two and is published as a separate view: [Customer Segment Revenue Share (FIXED LOD)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
 
@@ -186,6 +186,20 @@ It uses FIXED level-of-detail expressions on the RFM customer table (5,852 custo
 
 * **Segment share:** because the numerator and denominator are fixed, each segment's share of net revenue stays correct whatever else is on the view. Champions account for 74.04% of net revenue, matching the RFM analysis in notebook 04.
 * **Country benchmark:** each customer is compared with the average for their own primary country rather than the global average. 994 of the 1,448 Champions are above their country's average and 454 are at or below it.
+* **Reconciliation (data blend):** the RFM customer table (primary source) is blended with the Snowflake `MART_CUSTOMER_SEGMENTS` export (secondary source) on Customer Segment, and `Difference (LOD vs Snowflake)` = `SUM([Segment Revenue Share (LOD)]) - SUM([customer_segments].[Net Revenue Share Pct])`. Every segment differs by 0.05 percentage points or less, which is the rounding in the Snowflake export (3 decimals), so the Tableau and Snowflake segment shares agree.
+
+| Segment | LOD share (Python RFM table) | Snowflake mart share | Difference |
+| --- | ---: | ---: | ---: |
+| Champions | 74.04% | 74.00% | 0.04% |
+| At Risk | 9.60% | 9.60% | 0.00% |
+| Potential Loyalists | 5.43% | 5.40% | 0.03% |
+| Loyal Customers | 5.24% | 5.20% | 0.04% |
+| Hibernating | 3.14% | 3.10% | 0.04% |
+| Need Attention | 1.30% | 1.30% | 0.00% |
+| Promising Customers | 0.58% | 0.60% | -0.02% |
+| High-Value Active | 0.29% | 0.30% | -0.01% |
+| New Customers | 0.25% | 0.30% | -0.05% |
+| Regular Customers | 0.14% | 0.10% | 0.04% |
 
 ![Segment Revenue Share and Country Benchmark](screenshots/tableau_lod_analysis.png)
 
