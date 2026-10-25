@@ -44,6 +44,10 @@ The findings below are associations observed in this dataset, not proof of cause
 
 **Next steps this data supports:** capture cancellation reason codes at the point of order, and review the 12 product categories against an ABC classification to identify range-rationalisation candidates.
 
+## Presentation
+
+A 7-slide summary of the findings and recommendations, with speaker notes: [PowerPoint](presentation/Customer_Revenue_Retention_Summary.pptx) · [PDF](presentation/Customer_Revenue_Retention_Summary.pdf).
+
 ## Project Architecture
 
 ```mermaid
@@ -244,6 +248,10 @@ Customer-Revenue-Retention-Analytics/
 ├── documentation/
 │   ├── Data_Dictionary.md
 │   └── Methodology.md
+│
+├── presentation/
+│   ├── Customer_Revenue_Retention_Summary.pptx
+│   └── Customer_Revenue_Retention_Summary.pdf
 │
 ├── notebooks/
 │   ├── 01_data_inspection.ipynb
