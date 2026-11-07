@@ -121,7 +121,7 @@ Weighted retention was calculated using the total retained customers and total e
 * **Early repeat:** bought again on a later day within 30 days of the first purchase.
 * I compared retention rates using Wilson confidence intervals and chi-square tests. I then fitted a logistic regression so each driver is measured with the others held constant.
 
-**Data start check:** The data begins in December 2009. Customers who first appear that month include older customers whose real first purchase was earlier. These 951 customers retained at 79%, against 50% for everyone else, so I excluded them. The results below use the remaining 3,333 customers, whose baseline retention is 49.7%.
+**Data start check:** The data begins in December 2009. Customers who first appear that month likely include older customers who had already bought before the data began. These 951 customers retained at 79%, against 50% for everyone else, so I excluded them. The results below use the remaining 3,333 customers, whose baseline retention is 49.7%.
 
 | Driver | Retention | Odds ratio (95% CI) |
 | ------ | --------- | ------------------- |
