@@ -110,6 +110,34 @@ The cohort heatmap shows a substantial decline after the initial purchase. Reten
 
 Weighted retention was calculated using the total retained customers and total eligible customers across all eligible cohorts for each retention period.
 
+### Retention drivers (notebook 07)
+
+**Question:** Which early customer behaviours are linked to a customer still buying 6–12 months after their first purchase?
+
+**Method**
+
+* **Who is included:** 4,284 customers whose first purchase was at least 365 days before the end of the data.
+* **Retained:** bought again between day 181 and day 365.
+* **Early repeat:** bought again on a later day within 30 days of the first purchase.
+* I compared retention rates using Wilson confidence intervals and chi-square tests. I then fitted a logistic regression so each driver is measured with the others held constant.
+
+**Data start check:** The data begins in December 2009. Customers who first appear that month include older customers whose real first purchase was earlier. These 951 customers retained at 79%, against 50% for everyone else, so I excluded them. The results below use the remaining 3,333 customers, whose baseline retention is 49.7%.
+
+| Driver | Retention | Odds ratio (95% CI) |
+| ------ | --------- | ------------------- |
+| Bought again within 30 days | 67.1% vs 46.4% | 2.23 (1.83–2.73) |
+| First order value (per doubling) | 37.4% in lowest quartile → 58.8% in highest | about 1.21 |
+| First purchase in Nov–Dec 2010 | 38.8% vs 51.1% | 0.57 (0.45–0.72) |
+| UK customer | no clear difference | 1.01 (0.78–1.30) |
+
+![Retention drivers](screenshots/retention_drivers.png)
+
+**Note:** On all 4,284 customers, holiday starters seemed to retain *better*. The result flipped once the December 2009 group was removed. That group was distorting the comparison, so the check mattered.
+
+**Limits:** These are associations, not causes. The data comes from a single online retailer.
+
+**Suggested next step:** A/B test a follow-up offer sent within 30 days of a first order. Track holiday first-time buyers as their own group.
+
 ## Generative AI Product Classification
 
 Product descriptions were classified into business-friendly categories using the local **Qwen3:4B** model through Ollama.
@@ -259,14 +287,16 @@ Customer-Revenue-Retention-Analytics/
 │   ├── 03_revenue_analysis.ipynb
 │   ├── 04_customer_segmentation.ipynb
 │   ├── 05_retention_cohort_analysis.ipynb
-│   └── 06_genai_product_classification.ipynb
+│   ├── 06_genai_product_classification.ipynb
+│   └── 07_retention_drivers.ipynb
 │
 ├── screenshots/
 │   ├── tableau_revenue_overview.png
 │   ├── tableau_retention_overview.png
 │   ├── tableau_lod_analysis.png
 │   ├── genai_category_net_revenue.png
-│   └── genai_product_vs_revenue_share.png
+│   ├── genai_product_vs_revenue_share.png
+│   └── retention_drivers.png
 │
 ├── sql/
 │   ├── 01_environment_setup.sql
@@ -349,7 +379,7 @@ ollama pull qwen3:4b
 
 ### 4. Run the Python notebooks
 
-Run the notebooks sequentially from `01` through `06`.
+Run the notebooks sequentially from `01` through `07`.
 
 ### 5. Build the Snowflake warehouse
 
