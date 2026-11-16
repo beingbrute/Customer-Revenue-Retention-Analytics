@@ -174,6 +174,51 @@ Because the model runs locally, the workflow does not require a paid API and doe
 
 ![GenAI Product vs Revenue Share](screenshots/genai_product_vs_revenue_share.png)
 
+## Revenue Forecast and Budget vs Actual (Jun - Nov 2011)
+
+**Question:** how well can monthly net revenue be forecast, and how did actual results compare with a plan?
+
+**Test design**
+- Train: Jan 2010 - May 2011 (17 months). Test: Jun - Nov 2011 (6 months), never used for fitting.
+- One forecast made at the end of May 2011 for all six test months (fixed origin, 1 to 6 months ahead).
+- December 2011 excluded: the data ends on 9 Dec 2011, so it is a partial month.
+
+**Methods and results**
+
+| Method | MAE | WAPE | Bias |
+|---|---:|---:|---:|
+| Seasonal naive (same month last year) | £54,143 | 5.84% | -5.58% |
+| Seasonal naive x YoY growth (Jan-May 2011 vs 2010: -4.93%) | £94,907 | 10.24% | -10.24% |
+| Holt linear trend (no seasonality) | £224,263 | 24.19% | -21.66% |
+
+- The simplest method won. Seventeen months is too short to fit a 12-month seasonal model reliably, and Holt's trend model, with no seasonality, missed the autumn peak.
+- Adjusting for the weak first half of 2011 made the forecast worse: revenue recovered from September (Sep 2011 was 20.2% above Sep 2010).
+
+**Budget vs actual (illustrative)**
+
+The budget is a hypothetical planning scenario, not a real company budget: 2010 actual for the same month plus 10% growth, set before the year starts. The revised forecast is the growth-adjusted forecast made at the end of May.
+
+| Jun - Nov 2011 | Net revenue |
+|---|---:|
+| Budget | £5,778,140 |
+| Revised forecast (May) | £4,993,703 |
+| Actual | £5,563,143 |
+| Variance vs budget | -£214,998 (-3.7%) |
+| of which gross sales | -£241,919 |
+| of which cancellations | +£26,922 |
+| Variance vs revised forecast | +£569,440 |
+
+- Actual revenue was below budget in 5 of 6 months; the largest shortfall was October 2011 (-£114,182).
+- The shortfall came from lower gross sales; fewer cancellations than planned offset about £27K of it.
+- The May revised forecast was too pessimistic by £569K: it extended the weak first half into an autumn that recovered.
+
+**Files**
+- `forecast/forecast_variance.py`: forecasts, error scores and budget vs actual, read from `data/processed/analytics/monthly_revenue.csv`; CSV outputs in `forecast/output/`.
+- `forecast/build_workbook.py`: builds the Excel report from those outputs.
+- `forecast/output/forecast_variance_report.xlsx`: variance, KPIs and error measures are live Excel formulas; the planning-growth cell on the first sheet can be changed to test other budget scenarios; a check cell confirms that the variance equals the gross sales effect plus the cancellation effect.
+
+**Limitations:** one six-month test period; monthly data only, so no country-level split in this section; the budget is illustrative.
+
 ## Tableau Dashboards
 
 The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment LOD Analysis & Reconciliation (FIXED, INCLUDE, EXCLUDE + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
