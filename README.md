@@ -69,6 +69,7 @@ flowchart TD
 * Matplotlib and Seaborn
 * Jupyter Notebook
 * Snowflake SQL
+* Excel (Power Query, Data Model, PivotTables)
 * Tableau
 * Ollama
 * Qwen3:4B
@@ -219,6 +220,35 @@ The budget is a hypothetical planning scenario, not a real company budget: 2010 
 
 **Limitations:** one six-month test period; monthly data only, so no country-level split in this section; the budget is illustrative.
 
+## Power Query in Excel: Loading and Deduplicating the Raw File
+
+The Python cleaning notebook was rebuilt in Excel Power Query as an independent check, and the result was loaded into the Excel Data Model.
+
+**Steps (`excel/retail_power_query.xlsx`)**
+- Source: `data/raw/online_retail_II.xlsx`, two sheets (`Year 2009-2010`, `Year 2010-2011`), one query each with explicit column types.
+- `retail_combined`: the two sheets appended into one table.
+- `retail_clean`: a reference to `retail_combined` with duplicate rows removed across all 8 columns.
+- `row_counts`: an M query that counts the rows in both tables with `Table.RowCount` and compares them with the figures from `notebooks/02_data_cleaning.ipynb`, returning OK or MISMATCH.
+- `retail_clean` is loaded to the Data Model only, because 1,033,036 rows is too close to the worksheet limit of 1,048,576. The other queries are connection only.
+
+**Result**
+
+| Check | Python notebook | Power Query | Status |
+|---|---:|---:|---|
+| Rows after stacking both sheets | 1,067,371 | 1,067,371 | OK |
+| Rows after removing duplicates | 1,033,036 | 1,033,036 | OK |
+| Duplicates removed | 34,335 | 34,335 | OK |
+
+A PivotTable on the `pivot_by_country` sheet counts line items by country directly from the Data Model; its grand total is 1,033,036.
+
+![Power Query row-count check](screenshots/power_query_row_counts.png)
+
+![PivotTable from the Data Model](screenshots/power_query_pivot_by_country.png)
+
+**To refresh:** place the raw file at `data/raw/online_retail_II.xlsx`, open the workbook, update the file path in Data > Get Data > Data Source Settings if your folder is different, then Data > Refresh All.
+
+**Scope:** this step covers stacking and duplicate removal only. Cancellations, returns and missing customer IDs are handled in the Python notebooks.
+
 ## Tableau Dashboards
 
 The dashboards are published on Tableau Public and can be explored in the browser: [Revenue Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RevenueOverview) · [Retention Overview](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake/RetentionOverview) · [Segment LOD Analysis & Reconciliation (FIXED, INCLUDE, EXCLUDE + Blend)](https://public.tableau.com/app/profile/aditya.ranjan7019/viz/Customer_Revenue_Retention_Analytics_Snowflake_17926845101980/LODAnalysis).
@@ -322,6 +352,14 @@ Customer-Revenue-Retention-Analytics/
 │   ├── Data_Dictionary.md
 │   └── Methodology.md
 │
+├── excel/
+│   └── retail_power_query.xlsx
+│
+├── forecast/
+│   ├── forecast_variance.py
+│   ├── build_workbook.py
+│   └── output/
+│
 ├── presentation/
 │   ├── Customer_Revenue_Retention_Summary.pptx
 │   └── Customer_Revenue_Retention_Summary.pdf
@@ -341,7 +379,9 @@ Customer-Revenue-Retention-Analytics/
 │   ├── tableau_lod_analysis.png
 │   ├── genai_category_net_revenue.png
 │   ├── genai_product_vs_revenue_share.png
-│   └── retention_drivers.png
+│   ├── retention_drivers.png
+│   ├── power_query_row_counts.png
+│   └── power_query_pivot_by_country.png
 │
 ├── sql/
 │   ├── 01_environment_setup.sql
