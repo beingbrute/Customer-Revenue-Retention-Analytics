@@ -69,6 +69,7 @@ flowchart TD
 * Matplotlib and Seaborn
 * Jupyter Notebook
 * Snowflake SQL
+* PostgreSQL (dimensional model)
 * Excel (Power Query, Data Model, PivotTables)
 * Tableau
 * Ollama
@@ -348,6 +349,14 @@ Customer-Revenue-Retention-Analytics/
 │       ├── analytics/
 │       └── cleaning_validation_summary.csv
 │
+├── dimensional_model/
+│   ├── load_staging.py
+│   ├── 01_dimensions.sql
+│   ├── 02_dim_customer_scd2.sql
+│   ├── 03_fact_sales.sql
+│   ├── 04_validation.sql
+│   └── 05_example_queries.sql
+│
 ├── documentation/
 │   ├── Data_Dictionary.md
 │   └── Methodology.md
@@ -381,7 +390,8 @@ Customer-Revenue-Retention-Analytics/
 │   ├── genai_product_vs_revenue_share.png
 │   ├── retention_drivers.png
 │   ├── power_query_row_counts.png
-│   └── power_query_pivot_by_country.png
+│   ├── power_query_pivot_by_country.png
+│   └── dimensional_model_validation.png
 │
 ├── sql/
 │   ├── 01_environment_setup.sql
@@ -421,6 +431,80 @@ The final warehouse validation confirmed:
 * RFM customer totals reconcile to **5,852 customers**
 * Product classification records contain no duplicate stock codes
 * Product-category revenue shares total **100%**
+
+## Dimensional Model (Star Schema) in PostgreSQL
+
+**Question:** can the cleaned data be modelled as a star schema that reproduces every total from the notebooks, and keeps customer history correct over time?
+
+The Snowflake warehouse above is organised in layers but not as a dimensional model, and the Snowflake trial account has since ended. The star schema was therefore built in a local PostgreSQL database (`retail_dw`) from the same cleaned file.
+
+```mermaid
+erDiagram
+    FACT_SALES }o--|| DIM_DATE : date_key
+    FACT_SALES }o--|| DIM_CUSTOMER : customer_key
+    FACT_SALES }o--|| DIM_PRODUCT : product_key
+    FACT_SALES }o--|| DIM_COUNTRY : country_key
+    FACT_SALES }o--|| DIM_LINE_TYPE : line_type_key
+    FACT_SALES {
+        bigint sales_line_id PK
+        text invoice_no "degenerate dimension"
+        int quantity
+        numeric gross_sales_value
+        numeric cancellation_value
+        numeric net_revenue_value
+    }
+    DIM_CUSTOMER {
+        int customer_key PK "surrogate key, 0 = unknown"
+        bigint customer_id "business key"
+        text country_name "SCD Type 2"
+        text customer_segment "Type 1 (latest RFM)"
+        timestamp valid_from
+        timestamp valid_to
+        boolean is_current
+    }
+    DIM_PRODUCT {
+        int product_key PK
+        text stock_code
+        text description
+        text product_category "GenAI classification"
+        text abc_class
+    }
+    DIM_DATE {
+        int date_key PK "YYYYMMDD"
+        date full_date
+        int year
+        int quarter
+        boolean is_weekend
+    }
+    DIM_COUNTRY {
+        int country_key PK
+        text country_name
+        boolean is_uk
+    }
+    DIM_LINE_TYPE {
+        int line_type_key PK
+        text transaction_type
+        text line_category
+    }
+```
+
+**Design**
+- **Grain:** one row per invoice line, the same 1,033,036 rows as the cleaned data. The invoice number stays on the fact as a degenerate dimension.
+- **Surrogate keys** on every dimension; the fact table stores only keys and measures.
+- **`dim_customer` is SCD Type 2 on country.** 13 customers placed invoices from more than one country over time (31 changes). Each change starts a new version with `valid_from`, `valid_to` and `is_current`, and each sale is joined to the version that was true on its invoice date. Customer 12455, for example, now buys from Spain, but £5,067 of their net revenue came from earlier invoices in Cyprus; a Type 1 dimension would have moved it all to Spain. The changes in this dataset alternate between countries, so they look more like orders shipped to different places than customers moving; the method is the same either way.
+- **`customer_segment`** (RFM) is a Type 1 attribute: the latest value on every version. Invoices with no customer ID (235,151 lines) point to an unknown member, `customer_key = 0`, instead of being dropped.
+- **`dim_product`** keeps the most frequent description for stock codes that appear with several (1,188 of 5,131) and adds the GenAI product category.
+- **`dim_line_type`** is a small junk dimension for the transaction type and line category flags.
+
+**Validation:** 12 checks, all OK. Row count, gross sales, cancellations and net revenue match the notebook to the penny; net revenue matches in all 25 months; every line found its customer version; each customer has exactly one current row with no gaps or overlaps between versions.
+
+![Star schema validation](screenshots/dimensional_model_validation.png)
+
+**Files (`dimensional_model/`)**
+- `load_staging.py`: creates the `retail_dw` database and loads the cleaned data, product classifications, RFM segments and the notebook's monthly totals into `staging`.
+- `01_dimensions.sql`, `02_dim_customer_scd2.sql`, `03_fact_sales.sql`: build the star schema.
+- `04_validation.sql`: the 12 checks above.
+- `05_example_queries.sql`: revenue by category and year, weekday vs weekend, the SCD Type 2 example, and RFM segment by country.
 
 ## Dataset
 
@@ -472,7 +556,17 @@ Run the numbered SQL files in the `sql` folder in sequence.
 
 After running the raw-table setup, load the cleaned transaction output and the generated customer-segment and product-classification outputs into their corresponding Snowflake tables.
 
-### 6. Open the Tableau workbook
+### 6. Build the star schema in PostgreSQL
+
+Needs a local PostgreSQL server (tested on 17) and the cleaned file from notebook `02`.
+
+```bash
+python dimensional_model/load_staging.py --port 5432
+```
+
+Then run `dimensional_model/01_dimensions.sql` to `05_example_queries.sql` in order against the `retail_dw` database (pgAdmin or psql). The password is typed when asked and never stored.
+
+### 7. Open the Tableau workbook
 
 Open:
 
